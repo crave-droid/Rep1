@@ -2,6 +2,7 @@ name: Run LJbot Tracker
 
 on:
   schedule:
+    # Triggers every 15 minutes automatically
     - cron: '*/15 * * * *'
   workflow_dispatch: 
 
@@ -24,4 +25,7 @@ jobs:
         pip install beautifulsoup4 requests
 
     - name: Execute LJbot Script
+      # Safely drops your secret into the server terminal context right as it fires
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       run: python LJbot.py
