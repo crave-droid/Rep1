@@ -20,13 +20,14 @@ def send_telegram_alert(message):
         print(f"Error sending alert: {e}")
 
 def check_model_status():
+    # Create browser-like headers so the website doesn't ignore the request
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     }
-    try:
-        response = requests.get(MODEL_URL, headers=headers, timeout=10)
-        if response.status_code != 200:
-            return False
+
+    # Add 'headers' and 'timeout' parameters to your get request
+    response = requests.get('https://imlive.com/live-sex-chat/cam-girls/laurajones0/', headers=headers, timeout=10)   
+
             
         soup = BeautifulSoup(response.text, 'html.parser')
         page_text = soup.get_text().lower()
