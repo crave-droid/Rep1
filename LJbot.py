@@ -1,18 +1,16 @@
-import os
 import requests
 from bs4 import BeautifulSoup
 
 # --- CONFIGURATION ---
 MODEL_URL = "https://imlive.com/live-sex-chat/cam-girls/laurajones0/"
 
-# Automatically pulls the secure token from GitHub Actions environment
-TELEGRAM_TOKEN = "8667818371:AAGZiEu5LK3KjFnWztw9kfRfPn--8EkJu7E"
+# ⚠️ MANUALLY PASTE YOUR CODES HERE DIRECTLY
+TELEGRAM_TOKEN = "8667818371:AAGZiEu5LK3KjFnWztw9kfRfPn--8EkJu7E" 
 TELEGRAM_CHAT_ID = 410050399
 
 def send_telegram_alert(message):
     """Sends a direct notification to your Telegram app."""
-  
-    # Official Telegram API gateway url structure
+    # The environment variable check has been completely removed here
     url = f"https://telegram.org{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message}
     try:
@@ -57,17 +55,10 @@ def check_model_status():
 
 def main():
     print("Cloud tracker execution initiated.")
-    
-    # Check current status
     is_online_now = check_model_status()
     
-    # ⚠️ MANUAL TEST BLOCK: Fired regardless of status to test connection logic
     print("Executing manual alert test...")
     send_telegram_alert(f"Testing connection! Scraper found status online = {is_online_now}")
-    
-    # Regular production path logic (will trigger normally alongside test)
-    if is_online_now:
-        print("Production match triggered.")
 
 if __name__ == "__main__":
     main()
