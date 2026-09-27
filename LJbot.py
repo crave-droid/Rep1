@@ -6,15 +6,12 @@ from bs4 import BeautifulSoup
 MODEL_URL = "https://imlive.com/live-sex-chat/cam-girls/laurajones0/"
 
 # Automatically pulls the secure token from GitHub Actions environment
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = "8667818371:AAGZiEu5LK3KjFnWztw9kfRfPn--8EkJu7E"
 TELEGRAM_CHAT_ID = 410050399
 
 def send_telegram_alert(message):
     """Sends a direct notification to your Telegram app."""
-    if not TELEGRAM_TOKEN:
-        print("Error: TELEGRAM_TOKEN environment variable is missing.")
-        return
-
+  
     # Official Telegram API gateway url structure
     url = f"https://telegram.org{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message}
