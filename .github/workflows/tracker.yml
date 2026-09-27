@@ -2,7 +2,6 @@ name: Run LJbot Tracker
 
 on:
   schedule:
-    # Triggers every 15 minutes automatically
     - cron: '*/15 * * * *'
   workflow_dispatch: 
 
@@ -24,8 +23,36 @@ jobs:
         python -m pip install --upgrade pip
         pip install beautifulsoup4 requests
 
-    - name: Execute LJbot Script
-      # Safely drops your secret into the server terminal context right as it fires
-      env:
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-      run: python LJbot.py
+    - name: Inline Execution Override
+      run: |
+        python -c "
+        import requests
+        from bs4 import BeautifulSoup
+
+        MODEL_URL = 'https://imlive.com/live-sex-chat/cam-girls/laurajones0/'
+        TELEGRAM_TOKEN = '8667818371:AAGZiEu5LK3KjFnWztw9kfRfPn--8EkJu7E'
+        TELEGRAM_CHAT_ID = 410050399
+
+        def send_alert(msg):
+            url = f'https://telegram.org{TELEGRAM_TOKEN}/sendMessage'
+            payload = {'chat_id': TELEGRAM_CHAT_ID, 'text': msg}
+            res = requests.post(url, json=payload, timeout=10)
+            print('Telegram status response:', res.status_code)
+
+        try:
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            req = requests.get(MODEL_URL, headers=headers, timeout=10)
+            soup = BeautifulSoup(req.text, 'html.parser')
+            text = soup.get_text().lower()
+            
+            if 'currently offline' in text:
+                print('Status evaluated: Offline')
+            elif 'online' in text or 'chat now' in text:
+                print('Status evaluated: Online!')
+                send_alert('LJ is online!')
+            else:
+                print('Status unknown, sending test alert anyway')
+                send_alert('Tracker test alert payload triggered!')
+        except Exception as e:
+            print('Execution failure:', e)
+        "
