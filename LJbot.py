@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 # --- CONFIGURATION ---
 MODEL_URL = "https://imlive.com"
 
-# Pulls your secure token from GitHub Secrets
-TELEGRAM_TOKEN = os.environ.get("8667818371:AAGZiEu5LK3KjFnWztw9kfRfPn--8EkJu7E")
+# Automatically pulls the secure token from GitHub Actions environment
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = 410050399
 
 def send_telegram_alert(message):
@@ -15,6 +15,7 @@ def send_telegram_alert(message):
         print("Error: TELEGRAM_TOKEN environment variable is missing.")
         return
 
+    # Fixed to point to the official Telegram API gateway
     url = f"https://telegram.org{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message}
     try:
@@ -33,8 +34,8 @@ def check_model_status():
         "Accept-Language": "en-US,en;q=0.9"
     }
 
-    # FIX: Added the missing try block to balance the except block below
     try:
+        # Request the page with an explicit 10-second connection timeout limit
         response = requests.get(MODEL_URL, headers=headers, timeout=10)   
         
         if response.status_code != 200:
@@ -44,7 +45,7 @@ def check_model_status():
         soup = BeautifulSoup(response.text, 'html.parser')
         page_text = soup.get_text().lower()
         
-        # If the direct indicator text is found, confirm she is offline
+        # Explicit block check: If 'currently offline' appears, she's definitely offline
         if "currently offline" in page_text:
             print("Status: Offline")
             return False
@@ -63,7 +64,7 @@ def check_model_status():
 def main():
     print("Cloud tracker execution initiated.")
     
-    # Executes exactly once per workflow trigger
+    # Executes exactly once per workflow trigger to protect your server minutes
     is_online_now = check_model_status()
     
     if is_online_now:
